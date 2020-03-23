@@ -1,0 +1,39 @@
+[03/19/2020 01:40:05] - Starting Import...
+[03/19/2020 01:40:09] - Exception Retrieving Internal ID! ~ Record Change Blocked!  Incoming - Last: Jones, First: Jayden, Middle: James , DOB: 11/28/2011, Gender: Male  --  Existing - Last: Jones, First: Jayden, Middle:  , DOB: 11/28/2011, Gender: Female
+[03/19/2020 01:46:43] - Import Complete!
+Demographics
+ - Processed: 1928
+ - Added: 0 - Updated: 1928 - Inactivated: 0
+ - Warnings: 0 - Errors: 1
+ - Time Taken: 00:00:09.1812862
+
+[03/19/2020 01:46:43] - Import Complete!
+Caregivers
+ - Processed: 3216
+ - Updated: 3216
+ - Warnings: 0 - Errors: 0
+ - Time Taken: 00:00:30.1698382
+
+[03/19/2020 01:46:43] - Import Complete!
+Contacts
+ - Processed: 1888
+ - Updated: 1888
+ - Removed: 0
+ - Warnings: 0 - Errors: 0
+ - Time Taken: 00:00:12.5946847
+
+[03/19/2020 01:46:43] - Import Complete!
+Conditions
+ - Processed: 654
+ - Updated: 654
+ - Removed: 0
+ - Warnings: 0 - Errors: 0
+ - Time Taken: 00:00:01.9750217
+
+[03/19/2020 01:46:43] - Import Complete!
+Absences
+ - Processed: 26153
+ - Updated: 26153
+ - Warnings: 0 - Errors: 0
+ - Time Taken: 00:05:33.2203653
+
