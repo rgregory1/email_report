@@ -6,3 +6,6 @@ attachments/*
 
 # exception to the rule
 !attachments/.gitkeep 
+
+venv/
+.vscode
