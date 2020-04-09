@@ -21,10 +21,10 @@ def main():
     imap = ImapClient(recipient=gmail_user)
     imap.login()
     # retrieve messages from a given sender
-    messages = imap.get_messages(sender='powerschool@mvsdschools.org')
+    ps_messages = imap.get_messages(sender='powerschool@mvsdschools.org')
     # Do something with the messages
     print("Messages in my inbox:")
-    for msg in messages:
+    for msg in ps_messages:
         # msg is a dict of {'num': num, 'body': body}
         print(msg['num'])
         print(msg['body'])
@@ -34,17 +34,18 @@ def main():
 
     messages_2 = imap.get_messages(sender='no_reply@pcgus.com')
 
+    snap_messages = imap.get_messages(sender='HostedImport@hosting.snaphealthcenter.com')
 
     imap.logout()
 
     # process vcat raw message in to three seperate lines
-    for dic in messages:
+    for dic in ps_messages:
         dic['body']=dic['body'].replace('\r','')
         dic['body']=dic['body'].replace('\n\n','\n')
         dic['body']=dic['body'].split('\n')
 
     # find line with success in it and bold it
-    for dic in messages:
+    for dic in ps_messages:
         # if 'VCAT' in dic['body'][0]:
         for count,string in enumerate(dic['body'],0):
             if 'successful' in string:
@@ -57,7 +58,7 @@ def main():
     contents = []
 
     # add VCAT messages to contents
-    for msg in messages:
+    for msg in ps_messages:
         for line in msg['body']:
             contents.append(line)
         contents.append('\n<hr>\n')
