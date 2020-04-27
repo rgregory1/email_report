@@ -89,14 +89,17 @@ def main():
         contents.append("\n<hr>\n")
     for msg in gv_messages:
         contents.append(msg["body"])
-    # add seperator to end of goalview info
-    contents.append("\n<hr>\n")
 
     if "snap_report" in locals():
+        # add seperator to end of goalview info
+        contents.append("\n<hr>\n")
         for msg in snap_report:
             contents.append(msg)
 
     yag = yagmail.SMTP(gmail_user, gmail_password)
+
+    if len(contents) == 0:
+        contents = "No emails today"
 
     # contents = [
     #     "This is the body, and here is just text http://somedomain/image.png",
