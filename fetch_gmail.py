@@ -2,6 +2,7 @@
 
 from ImapClient import ImapClient
 
+import datetime
 import email
 import email.header
 import imaplib
@@ -16,6 +17,11 @@ import yagmail
 
 
 def main():
+
+    # get timestamp for log
+    temp_timestamp = str(datetime.datetime.now())
+    print("\n\n" + temp_timestamp)
+    print("------------------------------\n")
 
     imap = ImapClient(recipient=gmail_user)
     imap.login()
@@ -65,12 +71,13 @@ def main():
             snap_txt = item
 
     # read the txt file to a list
-    with open(snap_txt) as f:
-        snap_report = f.readlines()
+    if "snap_text" in locals():
+        with open(snap_txt) as f:
+            snap_report = f.readlines()
 
-    # add info to identify information
-    snap_report.insert(0, "SNAP Report")
-    snap_txt.unlink()
+        # add info to identify information
+        snap_report.insert(0, "SNAP Report")
+        snap_txt.unlink()
 
     # prepare variable for sending
     contents = []
@@ -84,8 +91,10 @@ def main():
         contents.append(msg["body"])
     # add seperator to end of goalview info
     contents.append("\n<hr>\n")
-    for msg in snap_report:
-        contents.append(msg)
+
+    if "snap_report" in locals():
+        for msg in snap_report:
+            contents.append(msg)
 
     yag = yagmail.SMTP(gmail_user, gmail_password)
 
