@@ -28,7 +28,7 @@ def main():
         print(msg["num"])
         print(msg["body"])
         # you could delete them after viewing
-        imap.delete_message(msg["num"])
+        # imap.delete_message(msg["num"])
     # when done, you should log out
 
     gv_messages = imap.get_messages(sender="no_reply@pcgus.com")
