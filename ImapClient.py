@@ -3,39 +3,42 @@ import email.header
 import imaplib
 import os
 import sys
+import pathlib
 from credentials import gmail_password, gmail_user
 
-attachment_dir = '/Users/rgregory/Documents/Github/email_report/attachments'
+# attachment_dir = '/Users/rgregory/Documents/Github/email_report/attachments'
+
+attachment_dir = pathlib.Path.cwd().joinpath("attachments")
+
 
 def get_attachments(msg):
     for part in msg.walk():
-        if part.get_content_maintype()=='multipart':
+        if part.get_content_maintype() == "multipart":
             continue
-        if part.get('Content-Disposition') is None:
+        if part.get("Content-Disposition") is None:
             continue
         fileName = part.get_filename()
-        
+
         if bool(fileName):
-            filePath = os.path.join(attachment_dir, fileName)
-            with open(filePath, 'wb') as f:
+            # filePath = os.path.join(attachment_dir, fileName)
+            filePath = attachment_dir.joinpath(fileName)
+            with open(filePath, "wb") as f:
                 f.write(part.get_payload(decode=True))
 
 
 class ImapClient:
     imap = None
 
-    def __init__(self,
-                 recipient,
-                 server='imap.gmail.com',
-                 use_ssl=True,
-                 move_to_trash=True):
+    def __init__(
+        self, recipient, server="imap.gmail.com", use_ssl=True, move_to_trash=True
+    ):
         # check for required param
         if not recipient:
-            raise ValueError('You must provide a recipient email address')
+            raise ValueError("You must provide a recipient email address")
         self.recipient = recipient
         self.use_ssl = use_ssl
         self.move_to_trash = move_to_trash
-        self.recipient_folder = 'INBOX'
+        self.recipient_folder = "INBOX"
         # self.recipient_folder = 'report'
         # instantiate our IMAP client object
         if self.use_ssl:
@@ -47,7 +50,7 @@ class ImapClient:
         try:
             rv, data = self.imap.login(self.recipient, gmail_password)
         except (imaplib.IMAP4_SSL.error, imaplib.IMAP4.error) as err:
-            print('LOGIN FAILED!')
+            print("LOGIN FAILED!")
             print(err)
             sys.exit(1)
 
@@ -62,7 +65,7 @@ class ImapClient:
         """
         self.recipient_folder = folder
 
-    def get_messages(self, sender, subject=''):
+    def get_messages(self, sender, subject=""):
         """
         Scans for email messages from the given sender and optionally
         with the given subject
@@ -72,22 +75,22 @@ class ImapClient:
         :return List of dicts of {'num': num, 'body': body}
         """
         if not sender:
-            raise ValueError('You must provide a sender email address')
+            raise ValueError("You must provide a sender email address")
 
         # select the folder, by default INBOX
         resp, _ = self.imap.select(self.recipient_folder)
-        if resp != 'OK':
+        if resp != "OK":
             print(f"ERROR: Unable to open the {self.recipient_folder} folder")
             sys.exit(1)
 
         messages = []
 
-        mbox_response, msgnums = self.imap.search(None, 'FROM', sender)
-        if mbox_response == 'OK':
+        mbox_response, msgnums = self.imap.search(None, "FROM", sender)
+        if mbox_response == "OK":
             for num in msgnums[0].split():
-                retval, rawmsg = self.imap.fetch(num, '(RFC822)')
-                if retval != 'OK':
-                    print('ERROR getting message', num)
+                retval, rawmsg = self.imap.fetch(num, "(RFC822)")
+                if retval != "OK":
+                    print("ERROR getting message", num)
                     continue
                 msg = email.message_from_bytes(rawmsg[0][1])
                 msg_subject = msg["Subject"]
@@ -97,19 +100,23 @@ class ImapClient:
                         get_attachments(msg)
                         for part in msg.walk():
                             type = part.get_content_type()
-                            disp = str(part.get('Content-Disposition'))
+                            disp = str(part.get("Content-Disposition"))
                             # look for plain text parts, but skip attachments
-                            if type == 'text/plain' and 'attachment' not in disp:
+                            if type == "text/plain" and "attachment" not in disp:
                                 charset = part.get_content_charset()
                                 # decode the base64 unicode bytestring into plain text
-                                body = part.get_payload(decode=True).decode(encoding=charset, errors="ignore")
+                                body = part.get_payload(decode=True).decode(
+                                    encoding=charset, errors="ignore"
+                                )
                                 # if we've found the plain/text part, stop looping thru the parts
                                 break
                     else:
                         # not multipart - i.e. plain text, no attachments
                         charset = msg.get_content_charset()
-                        body = msg.get_payload(decode=True).decode(encoding=charset, errors="ignore")
-                    messages.append({'num': num, 'body': body})
+                        body = msg.get_payload(decode=True).decode(
+                            encoding=charset, errors="ignore"
+                        )
+                    messages.append({"num": num, "body": body})
         return messages
 
     def delete_message(self, msg_id):
@@ -117,8 +124,8 @@ class ImapClient:
             return
         if self.move_to_trash:
             # move to Trash folder
-            self.imap.store(msg_id, '+X-GM-LABELS', '\\Trash')
+            self.imap.store(msg_id, "+X-GM-LABELS", "\\Trash")
             self.imap.expunge()
         else:
-            self.imap.store(msg_id, '+FLAGS', '\\Deleted')
+            self.imap.store(msg_id, "+FLAGS", "\\Deleted")
             self.imap.expunge()

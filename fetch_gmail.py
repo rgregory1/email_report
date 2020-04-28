@@ -18,6 +18,9 @@ import yagmail
 
 def main():
 
+    # set snap_text variable so it doesn't break progam if not present
+    snap_txt = ""
+
     # get timestamp for log
     temp_timestamp = str(datetime.datetime.now())
     print("\n\n" + temp_timestamp)
@@ -71,7 +74,8 @@ def main():
             snap_txt = item
 
     # read the txt file to a list
-    if "snap_text" in locals():
+    # if "snap_text" in locals():
+    if snap_txt != "":
         with open(snap_txt) as f:
             snap_report = f.readlines()
 
