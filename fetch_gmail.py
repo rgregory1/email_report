@@ -13,8 +13,6 @@ from credentials import gmail_password, gmail_user, me
 
 import yagmail
 
-# let's see if this works
-
 
 def main():
 
@@ -28,28 +26,32 @@ def main():
 
     imap = ImapClient(recipient=gmail_user)
     imap.login()
-    # retrieve messages from a given sender
+
+    def remove_messages_from_sender(current_messages):
+        for msg in current_messages[::-1]:
+            # msg is a dict of {'num': num, 'body': body}
+            # print(msg["num"])
+            # print(msg["subject"])
+            # print(msg["body"])
+            # you could delete them after viewing
+            imap.delete_message(msg["num"])
+
+    # retrieve powerschool messages
     ps_messages = imap.get_messages(sender="powerschool@mvsdschools.org")
-    # Do something with the messages
-    print("Messages in my inbox:")
-    for msg in ps_messages:
-        # msg is a dict of {'num': num, 'body': body}
-        print(msg["num"])
-        print(msg["body"])
-        # you could delete them after viewing
-        # imap.delete_message(msg["num"])
-    # when done, you should log out
+    # remove messages from ps from inbox
+    remove_messages_from_sender(ps_messages)
 
     gv_messages = imap.get_messages(sender="no_reply@pcgus.com")
-    # for msg in gv_messages:
-    #     imap.delete_message(msg["num"])
+    # remove messages from goalview from inbox
+    remove_messages_from_sender(gv_messages)
 
     snap_messages = imap.get_messages(
         sender="HostedImport@hosting.snaphealthcenter.com"
     )
-    # for msg in snap_messages:
-    #     imap.delete_message(msg["num"])
+    # remove messages from snap from inbox
+    remove_messages_from_sender(snap_messages)
 
+    # when done, you should log out
     imap.logout()
 
     # process vcat raw message in to three seperate lines
@@ -91,6 +93,7 @@ def main():
         for line in msg["body"]:
             contents.append(line)
         contents.append("\n<hr>\n")
+
     for msg in gv_messages:
         contents.append(msg["body"])
 

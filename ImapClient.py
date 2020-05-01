@@ -6,12 +6,15 @@ import sys
 import pathlib
 from credentials import gmail_password, gmail_user
 
-# attachment_dir = '/Users/rgregory/Documents/Github/email_report/attachments'
 
 attachment_dir = pathlib.Path.cwd().joinpath("attachments")
 
 
 def get_attachments(msg):
+    """
+    for multipart messages, it saves the attachmens to an attachments directory
+    """
+
     for part in msg.walk():
         if part.get_content_maintype() == "multipart":
             continue
@@ -116,7 +119,8 @@ class ImapClient:
                         body = msg.get_payload(decode=True).decode(
                             encoding=charset, errors="ignore"
                         )
-                    messages.append({"num": num, "body": body})
+                    # messages.append({"num": num, "body": body})
+                    messages.append({"num": num, "body": body, "subject": msg_subject})
         return messages
 
     def delete_message(self, msg_id):
