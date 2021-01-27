@@ -23,6 +23,7 @@ def main():
     temp_timestamp = str(datetime.datetime.now())
     print("\n\n" + temp_timestamp)
     print("------------------------------\n")
+    today = temp_timestamp.split()[0]
 
     imap = ImapClient(recipient=gmail_user)
     imap.login()
@@ -112,7 +113,7 @@ def main():
     #     "This is the body, and here is just text http://somedomain/image.png",
     #     "You can find an audio file attached.", '/local/path/to/song.mp3'
     # ]
-    yag.send(me, "PS Report Summary", contents)
+    yag.send(me, "PS Report Summary " + today, contents)
 
 
 if __name__ == "__main__":
